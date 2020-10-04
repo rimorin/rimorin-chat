@@ -1,0 +1,10 @@
+.DS_Store
+.env
+change-theme.sh
+dangerfile.js
+ios
+node_modules
+plopfile.js
+rn_01.code-workspace
+src/
+yarn.lock
