@@ -29,7 +29,10 @@ export default class AuthScreen extends React.Component {
 
     user_id: '',
     password: '',
+
   };
+
+
 
   componentDidMount() {
     this.keyboardDidShowListener = Keyboard.addListener(
@@ -40,7 +43,7 @@ export default class AuthScreen extends React.Component {
       Platform.select({ android: 'keyboardDidHide', ios: 'keyboardWillHide' }),
       this._keyboardDidHide.bind(this),
     );
-  
+
     Animated.timing(this.state.anim, { toValue: 3000, duration: 3000 }).start();
   }
 
@@ -81,20 +84,18 @@ export default class AuthScreen extends React.Component {
 
   processAuth() {
 
-    const {user_id, password, formState} = this.state;
-    const {signIn} = this.props;
-    console.log(signIn)
-    console.log(`Current processAuth values, user id - ${user_id}, password - ${password}, formstate - ${formState}`)
-    // if(formState == FORM_STATES.LOGIN) {
+    const { user_id, password, formState } = this.state;
+    const { signIn, signUp } = this.props;
+    if (formState == FORM_STATES.LOGIN) {
       signIn(user_id, password);
-    // } else {
-
-    // }
+    } else {
+      signUp(user_id, password);
+    }
   }
 
   render() {
     const isRegister = this.state.formState === FORM_STATES.REGISTER;
-
+    const { isError, isSignedUp } = this.props;
     return (
       <ImageBackground
         source={require('../../../assets/images/background.png')}
@@ -117,15 +118,24 @@ export default class AuthScreen extends React.Component {
           <Animated.View
             style={[styles.section, styles.middle, this.fadeIn(700, -20)]}
           >
-            <TextInput
+            {/* <TextInput
               placeholder="Username"
               style={styles.textInput}
               autoCapitalize="none"
               autoCorrect={false}
               onChangeText={text => {this.setState({user_id : text})}}
+            /> */}
+
+            <TextInput
+              placeholder="Email"
+              style={styles.textInput}
+              autoCapitalize="none"
+              autoCorrect={false}
+              keyboardType="email-address"
+              onChangeText={text => { this.setState({ user_id: text }) }}
             />
 
-            {this.state.formState === FORM_STATES.REGISTER && (
+            {/* {this.state.formState === FORM_STATES.REGISTER && (
               <TextInput
                 placeholder="Email"
                 style={styles.textInput}
@@ -133,18 +143,41 @@ export default class AuthScreen extends React.Component {
                 autoCorrect={false}
                 keyboardType="email-address"
               />
-            )}
+            )} */}
 
             <TextInput
               placeholder="Password"
               secureTextEntry
               style={styles.textInput}
-              onChangeText={text => {this.setState({password : text})}}
+              onChangeText={text => { this.setState({ password: text }) }}
             />
 
             <Animated.View
               style={[styles.section, styles.bottom, this.fadeIn(700, -20)]}
             >
+
+              {isSignedUp && (
+                <Text
+                  style={{
+                    color: colors.primaryGradientEnd,
+                    fontFamily: fonts.primaryBold,
+                    paddingBottom: 10
+                  }}
+                >
+                  {'Account created. Pls check email for verification.'}
+                </Text>
+              )}
+              {isError && (
+                <Text
+                  style={{
+                    color: colors.secondary,
+                    fontFamily: fonts.primaryBold,
+                    paddingBottom: 10
+                  }}
+                >
+                  {'Error with user credentials'}
+                </Text>
+              )}
               <Button
                 bgColor={colors.secondary}
                 textColor="white"
