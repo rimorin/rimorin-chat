@@ -3,14 +3,19 @@ const AUTH_LOGIN_FAIL = 'AuthState/LOGIN_FAIL';
 const AUTH_LOGOUT = 'AuthState/LOGOUT';
 const AUTH_SIGNUP_SUCCESS = 'AuthState/SIGNUP_SUCCESS';
 const AUTH_SIGNUP_FAIL = 'AuthState/SIGNUP_FAIL';
-import { NODE_LOGIN, NODE_LOGIN_ANDROID, NODE_SIGNUP, NODE_SIGNUP_ANDROID } from 'react-native-dotenv';
+import { NODE_LOGIN, NODE_LOGIN_ANDROID, NODE_SIGNUP, NODE_SIGNUP_ANDROID, GOOGLE_WEB_ID, GOOGLE_IOS_ID } from 'react-native-dotenv';
 import { Platform } from 'react-native';
 
 export const initialState = {
+  isSocialLoggedIn: false,
   isLoggedIn: false,
   isSignedUp: false,
   isError: false
 };
+
+export const signIn_social = () => (dispatch) => {
+  dispatch({ type: AUTH_LOGIN_SUCCESS })
+}
 
 export const signIn = (name, password) => (dispatch) => {
   let login_url = NODE_LOGIN

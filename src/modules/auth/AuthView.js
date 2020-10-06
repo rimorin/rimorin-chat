@@ -13,6 +13,8 @@ import {
 
 import { fonts, colors } from '../../styles';
 import { TextInput, Button } from '../../components';
+import { GoogleSignin } from '@react-native-community/google-signin';
+import { GOOGLE_WEB_ID, GOOGLE_IOS_ID } from 'react-native-dotenv';
 
 const FORM_STATES = {
   LOGIN: 0,
@@ -32,9 +34,14 @@ export default class AuthScreen extends React.Component {
 
   };
 
+  async componentDidMount() {
 
+    await GoogleSignin.configure({
+      iosClientId: GOOGLE_IOS_ID,
+      webClientId: GOOGLE_WEB_ID,
+      offlineAccess: false
+    });
 
-  componentDidMount() {
     this.keyboardDidShowListener = Keyboard.addListener(
       Platform.select({ android: 'keyboardDidShow', ios: 'keyboardWillShow' }),
       this._keyboardDidShow.bind(this),
@@ -43,6 +50,8 @@ export default class AuthScreen extends React.Component {
       Platform.select({ android: 'keyboardDidHide', ios: 'keyboardWillHide' }),
       this._keyboardDidHide.bind(this),
     );
+
+    this._isSignedIn();
 
     Animated.timing(this.state.anim, { toValue: 3000, duration: 3000 }).start();
   }
@@ -92,6 +101,39 @@ export default class AuthScreen extends React.Component {
       signUp(user_id, password);
     }
   }
+
+  signIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      this.props.signIn_social();
+    } catch (error) {
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        // user cancelled the login flow
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        // operation (e.g. sign in) is in progress already
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        // play services not available or outdated
+      } else {
+        // some other error happened
+      }
+    }
+  };
+
+  _isSignedIn = async () => {
+    const isSignedIn = await GoogleSignin.isSignedIn();
+    if (isSignedIn) {
+      // alert('User is already signed in');
+      //Get the User details as user is already signed in
+      // this._getCurrentUserInfo();
+      // const { signIn_social } = this.props;
+      this.props.signIn_social();
+    } else {
+      //alert("Please Login");
+      // console.log('Please Login');
+    }
+    // this.setState({ gettingLoginStatus: false });
+  };
 
   render() {
     const isRegister = this.state.formState === FORM_STATES.REGISTER;
@@ -200,7 +242,7 @@ export default class AuthScreen extends React.Component {
                     bordered
                     icon={require('../../../assets/images/google-plus.png')}
                     iconColor={colors.primary}
-                    onPress={() => this.props.navigation.goBack()}
+                    onPress={() => this.signIn()}
                   />
                   <Button
                     style={[styles.socialButton, styles.socialButtonCenter]}

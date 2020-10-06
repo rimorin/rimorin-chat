@@ -22,6 +22,8 @@ DerivedData
 *.xcuserstate
 project.xcworkspace
 
+ios/
+
 # VSCode workspace file
 rn_01.code-workspace
 
