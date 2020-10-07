@@ -4,6 +4,7 @@ import { createStackNavigator, Header } from '@react-navigation/stack';
 import { Image, StyleSheet, TouchableOpacity } from 'react-native';
 
 import { GoogleSignin } from '@react-native-community/google-signin';
+import { LoginManager } from 'react-native-fbsdk';
 import chatNavigationData from './chatNavigationData';
 import LoginScreen from './../auth/AuthViewContainer';
 const Stack = createStackNavigator();
@@ -19,6 +20,7 @@ export default function NavigatorView(props) {
     try {
       await GoogleSignin.revokeAccess();
       await GoogleSignin.signOut();
+      await LoginManager.logOut();
     } catch (error) {
       console.error(error);
     }

@@ -16,6 +16,13 @@ import { TextInput, Button } from '../../components';
 import { GoogleSignin } from '@react-native-community/google-signin';
 import { GOOGLE_WEB_ID, GOOGLE_IOS_ID } from 'react-native-dotenv';
 
+import {
+  AccessToken,
+  GraphRequest,
+  GraphRequestManager,
+  LoginManager,
+} from 'react-native-fbsdk';
+
 const FORM_STATES = {
   LOGIN: 0,
   REGISTER: 1,
@@ -51,7 +58,9 @@ export default class AuthScreen extends React.Component {
       this._keyboardDidHide.bind(this),
     );
 
-    this._isSignedIn();
+    this._isGoogleSignedIn();
+
+    this._isFBSignedIn();
 
     Animated.timing(this.state.anim, { toValue: 3000, duration: 3000 }).start();
   }
@@ -120,8 +129,44 @@ export default class AuthScreen extends React.Component {
     }
   };
 
-  _isSignedIn = async () => {
+  _isGoogleSignedIn = async () => {
     const isSignedIn = await GoogleSignin.isSignedIn();
+    if (isSignedIn) {
+      // alert('User is already signed in');
+      //Get the User details as user is already signed in
+      // this._getCurrentUserInfo();
+      // const { signIn_social } = this.props;
+      this.props.signIn_social();
+    } else {
+      // alert("Please Login");
+      // console.log('Please Login');
+    }
+    // this.setState({ gettingLoginStatus: false });
+  };
+
+  loginWithFacebook = () => {
+    // Attempt a login using the Facebook login dialog asking for default permissions.
+    LoginManager.logInWithPermissions(['public_profile']).then(
+      login => {
+        if (login.isCancelled) {
+          console.log('Login cancelled');
+        } else {
+          this.props.signIn_social();
+          // AccessToken.getCurrentAccessToken().then(data => {
+          //   const accessToken = data.accessToken.toString();
+          //   this.getInfoFromToken(accessToken);
+          // });
+        }
+      },
+      error => {
+        console.log('Login fail with error: ' + error);
+      },
+    );
+  };
+
+  _isFBSignedIn = async () => {
+
+    const isSignedIn = await AccessToken.getCurrentAccessToken();
     if (isSignedIn) {
       // alert('User is already signed in');
       //Get the User details as user is already signed in
@@ -260,7 +305,7 @@ export default class AuthScreen extends React.Component {
                     bordered
                     icon={require('../../../assets/images/facebook.png')}
                     iconColor={colors.primary}
-                    onPress={() => this.props.navigation.goBack()}
+                    onPress={() => this.loginWithFacebook()}
                   />
                 </View>
               )}

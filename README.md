@@ -27,6 +27,8 @@ npm i react-native-dotenv and Add Plugin 'module:react-native-dotenv' to babel.r
 
 npm i @react-native-community/google-signin for Google sign-in
 
+npm i react-native-fbsdk for FB sign-in
+
 5. IOS react-native start -> run-ios
 6. Android react-native start -> run-android
 
@@ -43,4 +45,10 @@ This is likely happening when upgrading React Native from below 0.60 to 0.60 or 
 3. Error calling google sign in module
 To configure google sign in, setup IOS app in firebase, insert URL scheme in Xcode and configure javascript frontend with
 ios and web key. https://developers.google.com/identity/sign-in/ios/start-integrating
+
+4. Can't build using FB sdk.
+https://medium.com/@mehrankhandev/integrating-fbsdk-facebook-login-in-react-native-7b7600ce74a7
+https://stackoverflow.com/questions/62521056/facebook-sdk-error-on-installing-cocoapods-objetive-c
+
+
 
